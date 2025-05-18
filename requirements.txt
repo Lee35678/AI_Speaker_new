@@ -1,0 +1,10 @@
+# AI-스피커 + 낙상감지
+google-cloud-speech==2.32.0
+google-cloud-texttospeech>=2.20.0
+google-generativeai>=0.5.3
+opencv-python>=4.9.0.80            # OpenCV 전체 기능
+numpy>=1.26
+tensorflow==2.16.1                 # CPU/GPU 용. 라즈베리 파이 등에서는 tflite-runtime 사용
+pygame>=2.3.0
+requests>=2.31.0
+pyaudio>=0.2.14
