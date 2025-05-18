@@ -3,7 +3,7 @@ import requests
 import time
 
 # Firebase 콘솔 > 프로젝트 설정 > 클라우드 메시징 > 서버 키(legacy) 복사해서 붙여넣으세요
-SERVER_KEY = "BCpUVwkz-nA5ahAuwbDyrOJEKGORScLO2mSPVLYJVSZqP8DxUobVEFIMunrX3w_LHgDm7lGOLbxFXa4jZQSB_bQ"
+SERVER_KEY = ""
 
 FCM_URL = "https://fcm.googleapis.com/fcm/send"
 headers = {
