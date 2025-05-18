@@ -1,6 +1,6 @@
 # AI\_Speaker 프로젝트
 
-파이썬으로 구현한 **음성 기반 AI 스피커 & 낙상 감지 데모**입니다. Google Cloud STT/TTS, Gemini(Generative AI), Programmable Search Engine를 활용해 자연어 질의에 답하고, LiDAR LD500 데이터를 바탕으로 낙상 여부를 식별합니다.
+파이썬으로 구현한 **음성 기반 AI 스피커 & 낙상 감지 데모**입니다. Google Cloud STT/TTS, Gemini(Generative AI), Programmable Search Engine를 활용해 자연어 질의에 답하고, 카메라 데이터를 바탕으로 낙상 여부를 식별합니다.
 
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.11+-blue"/>
@@ -15,7 +15,7 @@
 AI_Speaker/
 ├─ main.py              # 데모 진입점 (스피커 + 낙상 모드 스위치)
 ├─ voice_module.py      # 웨이크 워드 기반 AI 스피커
-├─ fall_module.py       # LD500 LiDAR 실시간 낙상 감지
+├─ fall_module.py       # 카메라 실시간 낙상 감지
 ├─ fcm_module.py        # Firebase Cloud Messaging 경보 전송
 ├─ requirements.txt     # 의존성 목록
 ├─ Pling Sound.wav      # 웨이크‑워드 확인 효과음
