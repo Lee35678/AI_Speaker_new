@@ -124,7 +124,7 @@ $Env:GOOGLE_API_KEY_PALM="AIza..."
 | 파일                   | 역할                                            |
 | -------------------- | --------------------------------------------- |
 | **voice\_module.py** | 웨이크 워드 + Google STT/TTS + Gemini RAG로 Q\&A 수행 |
-| **fall\_module.py**  | LD500 LiDAR를 읽어 낙상 여부를 분류 (PySerial 필요)       |
+| **fall\_module.py**  | 카메라를 읽어 낙상 여부를 분류 (PySerial 필요)       |
 | **fcm\_module.py**   | Firebase Cloud Messaging 전송 래퍼                |
 | **main.py**          | 두 기능을 하나로 묶는 데모 엔트리 포인트                       |
 
