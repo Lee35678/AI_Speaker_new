@@ -14,19 +14,18 @@ import pygame, pyaudio, requests
 from google.auth.exceptions import DefaultCredentialsError
 
 # ────────────────────────────────────────────────────────────
-#  환경 변수
+#  환경 변수 & 상수
 # ────────────────────────────────────────────────────────────
-
-CSE_API_KEY = os.getenv("GOOGLE_API_KEY_SEARCH") or "여기에_검색_API_키를_입력하세요"
-CSE_ID      = os.getenv("GOOGLE_SEARCH_ENGINE_ID") or "83c22d5ab755e4657"
+CSE_API_KEY = os.getenv("GOOGLE_API_KEY_SEARCH") or "YOUR-CUSTOM-SEARCH-KEY"
+CSE_ID      = os.getenv("GOOGLE_SEARCH_ENGINE_ID") or "YOUR-SEARCH-ENGINE-CX"
 CSE_CX      = CSE_ID
-PALM_KEY    = os.getenv("GOOGLE_API_KEY_PALM")    or "여기에_Gemini_API_키를_입력하세요"
+PALM_KEY    = os.getenv("GOOGLE_API_KEY_PALM")    or "YOUR-GEMINI-KEY"
 MODEL_NAME  = "gemini-2.5-pro-preview-05-06"
 
 LOCAL_TZ    = ZoneInfo("Asia/Seoul")
 
 # 웨이크 워드 --------------------------------------------
-WAKE_WORDS  = [r"철수야", r"헤이\s*철수야"]
+WAKE_WORDS  = [r"스피커야", r"헤이\s*스피커"]
 WAKE_PAT    = re.compile("|".join(WAKE_WORDS), re.I)
 
 # STT 녹음 설정 ------------------------------------------
@@ -140,8 +139,7 @@ def _playback(path:str, interruptible:bool):
         logger.error(f"재생 오류: {e}")
     finally:
         _is_speaking = False; _stop_flag.clear()
-        try: os.remove(path) 
-        except: pass
+        try: os.remove(path) except: pass
 
 # ────────────────────────────────
 #  STT 녹음
