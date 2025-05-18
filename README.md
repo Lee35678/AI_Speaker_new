@@ -1,148 +1,133 @@
 # AI\_Speaker 프로젝트
 
-파이썬으로 구현한 **음성 기반 AI 스피커 & 낙상 감지 데모**입니다. Google Cloud STT/TTS, Gemini(Generative AI), Programmable Search Engine를 활용해 자연어 질의에 답하고, 카메라 데이터를 바탕으로 낙상 여부를 식별합니다.
+음성 인공지능 스피커와 **웹캠 기반 낙상 감지** 기능을 한 자리에서 시험해 볼 수 있는 파이썬 데모입니다.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/python-3.11+-blue"/>
-  <img src="https://img.shields.io/badge/license-MIT-green"/>
-</p>
+* **voice\_module.py**  : Google Cloud STT/TTS·Gemini·Programmable Search Engine를 이용한 한국어 음성 어시스턴트 (웨이크 워드 "스피커야")
+* **fall\_module.py**   : TensorFlow‑Lite MoveNet Lightning 모델로 **웹캠 영상**을 실시간 분석하여 낙상을 탐지, FCM(푸시) 알림 전송
+* **fcm\_module.py**    : Firebase Cloud Messaging 헬퍼
+* **main.py**          : 두 모듈을 한 프로그램에서 선택 실행할 수 있는 런처 (원한다면 따로 실행해도 무방)
 
----
+> ⓘ 초경량 운영을 위해 현재 버전은 **LD500 LiDAR** 센서를 사용하지 않습니다.
+> 웹캠(노트북 내장 카메라 등)만 연결되어 있으면 바로 낙상 감지를 시도할 수 있습니다.
 
-## 디렉터리 구조
+##  
 
-```text
-AI_Speaker/
-├─ main.py              # 데모 진입점 (스피커 + 낙상 모드 스위치)
-├─ voice_module.py      # 웨이크 워드 기반 AI 스피커
-├─ fall_module.py       # 카메라 실시간 낙상 감지
-├─ fcm_module.py        # Firebase Cloud Messaging 경보 전송
-├─ requirements.txt     # 의존성 목록
-├─ Pling Sound.wav      # 웨이크‑워드 확인 효과음
-└─ README.md            # 사용 설명서
-```
-
----
-
-## 설치 방법
-
-### 1) 클론 & 가상환경
+## 1. 빠른 시작
 
 ```bash
-$ git clone https://github.com/YourName/AI_Speaker.git
+# 저장소 클론 & 가상환경
+$ git clone https://github.com/your-id/AI_Speaker.git
 $ cd AI_Speaker
-$ python -m venv .venv
-$ source .venv/bin/activate  # Windows → .venv\Scripts\activate
+$ python -m venv .venv && .venv\Scripts\activate   # Windows 예시
+
+# 필수 패키지 설치
+(.venv)$ pip install -r requirements.txt
+
+# MoveNet TFLite 모델 다운로드 (1회)
+(.venv)$ curl -L -o movenet_lightning.tflite \
+  https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/tflite/float16/4?lite-format=tflite
+
+# 서비스 계정 키 등 환경 변수 설정 (아래 2‑B, 2‑C 참고)
+
+# AI 스피커 실행
+(.venv)$ python voice_module.py
+
+# 낙상 감지 실행 (웹캠 필요)
+(.venv)$ python fall_module.py
 ```
 
-### 2) 필수 라이브러리
+##  
 
-```bash
-(.venv) $ pip install -r requirements.txt
+## 2. 사전 준비
+
+### 2‑A. 파이썬 의존성
+
+`requirements.txt` 예시(버전은 변경 가능)
+
+```
+pygame
+pyaudio
+opencv-python
+numpy
+tensorflow==2.15.0   # TFLite Interpreter 포함
+webrtcvad            # (선택) 음성 Activity Detection
+requests
+google-generativeai
+google-cloud-speech
+google-cloud-texttospeech
+PyFCM                # FCM 알림 전송용
+gTTS                 # Cloud TTS 오류 시 폴백
 ```
 
-> **선택** : 더 정확한 음성 활성화를 원한다면 → `pip install webrtcvad`
+> **Windows** 에서 PyAudio는 미리 wheel 파일을 받아 두면 설치가 수월합니다.
 
-#### requirements.txt (발췌)
+### 2‑B. Google Cloud STT/TTS
 
-```text
-google-cloud-speech>=2.25.0
-google-cloud-texttospeech>=2.15.0
-google-generativeai>=0.4.0
-pygame>=2.6.0
-pyaudio>=0.2.14
-requests>=2.31
-```
+1. **서비스 계정** → 역할에 *Cloud Speech Client*, *Cloud Text‑to‑Speech Client* 부여
+2. JSON 키를 내려받아 예) `C:\Keys\gcloud-ai-speaker.json`
+3. 환경 변수 지정
+
+   ```powershell
+   setx GOOGLE_APPLICATION_CREDENTIALS C:\Keys\gcloud-ai-speaker.json
+   ```
+
+### 2‑C. Gemini API (Generative AI)
+
+1. [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) 에서 **API Key** 발급
+2. 환경 변수
+
+   ```powershell
+   setx GOOGLE_API_KEY_PALM <YOUR_GEMINI_KEY>
+   ```
+
+### 2‑D. Programmable Search Engine(CSE)
+
+1. [https://programmablesearchengine.google.com](https://programmablesearchengine.google.com) → *Create Search engine* → **Search the entire web**
+2. API Key 발급 ([https://developers.google.com/custom-search/v1/overview](https://developers.google.com/custom-search/v1/overview))
+3. 환경 변수
+
+   ```powershell
+   setx GOOGLE_API_KEY_SEARCH <YOUR_CSE_API_KEY>
+   setx GOOGLE_SEARCH_ENGINE_ID <YOUR_CSE_ID>
+   ```
+
+### 2‑E. Firebase Cloud Messaging(선택)
+
+1. Firebase Console → 새 프로젝트 → Cloud Messaging 탭
+2. **서버 Key**(또는 Legacy Server Key) 저장 → `FCM_SERVER_KEY` 환경 변수
+3. 안드로이드/iOS 앱 토큰을 `fcm_module.py` 또는 DB에 등록
+
+##  
+
+## 3. 음성 어시스턴트 상세
+
+| 기능     | 설명                                                 |
+| ------ | -------------------------------------------------- |
+| 웨이크 워드 | "스피커야", "헤이 스피커" – 호출 시 삐링 효과음 후 명령 대기             |
+| STT    | Google Cloud Speech‑to‑Text (webrtc‑VAD or RMS 감지) |
+| TTS    | 기본 Cloud TTS, 오류·오프라인 시 gTTS 폴백                    |
+| RAG    | 질문 → Google CSE 검색(상위 5개) → Gemini로 종합 답변          |
+| 특수 명령  | "현재 시간", "종료" 등 로컬 처리                              |
+
+##  
+
+## 4. 낙상 감지 모듈(fall\_module.py)
+
+| 항목    | 값                                               |
+| ----- | ----------------------------------------------- |
+| 모델    | **MoveNet Lightning TFLite** (단일 사람, 192×192)   |
+| 추론 간격 | `INFER_EVERY=2` → 약 15 FPS 웹캠에서 7‑8 FPS 추론      |
+| 판단 로직 | 코 y 낙폭 `dy` + 어깨‑엉덩이 각도 `da` 이동 평균이 임계치를 넘으면 낙상 |
+| 알림    | `send_fcm_alert(title, body)` 호출로 FCM 푸시        |
+
+> LD500 LiDAR 데이터셋은 포함되지 않았으며, 필요한 경우 MoveNet 파트를 교체하여 사용할 수 있습니다.
+
+##  
+
+## 5. 라이선스
+
+MIT License – 자유롭게 사용/수정하시고, 개선점을 공유해 주세요.
 
 ---
 
-## 환경 변수 설정 (필수)
-
-| 변수                               | 설명                                | 예시                        |
-| -------------------------------- | --------------------------------- | ------------------------- |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Cloud STT/TTS용 서비스 계정 JSON 경로     | `C:\Keys\ai-speaker.json` |
-| `GOOGLE_API_KEY_SEARCH`          | Custom Search JSON API Key        | `AIza...`                 |
-| `GOOGLE_SEARCH_ENGINE_ID`        | Programmable Search Engine ID(CX) | `83c22d5ab755e4657`       |
-| `GOOGLE_API_KEY_PALM`            | Gemini (PaLM 2) API Key           | `AIza...`                 |
-
-Windows PowerShell 예시:
-
-```powershell
-$Env:GOOGLE_APPLICATION_CREDENTIALS="C:\Keys\ai-speaker.json"
-$Env:GOOGLE_API_KEY_SEARCH="AIza..."
-$Env:GOOGLE_SEARCH_ENGINE_ID="83c22d5ab755e4657"
-$Env:GOOGLE_API_KEY_PALM="AIza..."
-```
-
----
-
-## Google Cloud & API 설정 가이드
-
-1. **Google Cloud Project 생성** 후 ‘Speech‑to‑Text’, ‘Text‑to‑Speech’ API 활성화
-2. **IAM & 관리 → 서비스 계정** → 새 계정 생성 → 키 (JSON) 다운로드
-3. **Programmable Search Engine** ([https://programmablesearchengine.google.com](https://programmablesearchengine.google.com))
-
-   * *Search entire web* 활성화 → 배포 탭에서 **Search engine ID(CX)** 복사
-4. **Custom Search JSON API** 활성화 → API Key 발급
-5. **Google AI Studio** ([https://aistudio.google.com](https://aistudio.google.com)) → API Key 발급 (Gemini Pro 모델)
-6. 위 네 값과 JSON 파일 경로를 모두 환경 변수에 등록
-
----
-
-## 실행
-
-### 1) AI 스피커만 실행
-
-```bash
-(.venv) $ python voice_module.py
-```
-
-* **웨이크 워드** : "스피커야", "헤이 스피커"
-* 예) “스피커야, 오늘 서울 날씨 알려 줘.”
-
-### 2) 낙상 감지
-
-```bash
-(.venv) $ python fall_module.py
-```
-
-* LD500 LiDAR 센서를 USB(UART)로 연결해야 함
-* 실시간 상태(서 / 보행 / 좌 / 전 / 후 낙상)를 콘솔에 출력하며, `fcm_module.py`를 통해 FCM 푸시를 전송
-
-### 3) 통합 시나리오
-
-```bash
-(.venv) $ python main.py
-```
-
-`main.py`는 프로젝트별로 원하는 흐름(스피커 ↔ 낙상 모드 전환 등)을 조합하는 예시 코드입니다.
-
----
-
-## 주요 파일 설명
-
-| 파일                   | 역할                                            |
-| -------------------- | --------------------------------------------- |
-| **voice\_module.py** | 웨이크 워드 + Google STT/TTS + Gemini RAG로 Q\&A 수행 |
-| **fall\_module.py**  | 카메라를 읽어 낙상 여부를 분류 (PySerial 필요)       |
-| **fcm\_module.py**   | Firebase Cloud Messaging 전송 래퍼                |
-| **main.py**          | 두 기능을 하나로 묶는 데모 엔트리 포인트                       |
-
----
-
-## 커스터마이징 포인트
-
-* **웨이크 워드** : `WAKE_WORDS` 리스트 수정
-* **음성 감지 민감도** : `AUDIO_THRESH`, `webrtcvad.Vad(level)` 조정
-* **타임존** : `LOCAL_TZ = ZoneInfo("Asia/Seoul")` 변경
-* **LD500 임계값** : `fall_module.py` 내부 `THRESH_*` 상수 조정
-
----
-
-## 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다.
-
----
-
-Happy Hacking! 🎙️🤖
+**문의·기여** : Pull Request나 Issue로 편하게 남겨 주세요. 🙌
