@@ -120,7 +120,6 @@ gTTS                 # Cloud TTS 오류 시 폴백
 | 판단 로직 | 코 y 낙폭 `dy` + 어깨‑엉덩이 각도 `da` 이동 평균이 임계치를 넘으면 낙상 |
 | 알림    | `send_fcm_alert(title, body)` 호출로 FCM 푸시        |
 
-> LD500 LiDAR 데이터셋은 포함되지 않았으며, 필요한 경우 MoveNet 파트를 교체하여 사용할 수 있습니다.
 
 ##  
 
