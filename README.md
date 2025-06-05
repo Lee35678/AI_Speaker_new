@@ -2,7 +2,7 @@
 
 음성 인공지능 스피커와 **웹캠 기반 낙상 감지** 기능을 한 자리에서 시험해 볼 수 있는 파이썬 데모입니다.
 
-* **voice\_module.py**  : Google Cloud STT/TTS·Gemini·Programmable Search Engine를 이용한 한국어 음성 어시스턴트 (웨이크 워드 "스피커야")
+* **voice\_module.py**  : Google Cloud STT/TTS·Gemini·Programmable Search Engine를 이용한 한국어 음성 어시스턴트 (웨이크 워드 "실비야")
 * **fall\_module.py**   : TensorFlow‑Lite MoveNet Lightning 모델로 **웹캠 영상**을 실시간 분석하여 낙상을 탐지, FCM(푸시) 알림 전송
 * **fcm\_module.py**    : Firebase Cloud Messaging 헬퍼
 * **main.py**          : 두 모듈을 한 프로그램에서 선택 실행할 수 있는 런처 (원한다면 따로 실행해도 무방)
@@ -103,7 +103,7 @@ gTTS                 # Cloud TTS 오류 시 폴백
 
 | 기능     | 설명                                                 |
 | ------ | -------------------------------------------------- |
-| 웨이크 워드 | "스피커야", "헤이 스피커" – 호출 시 삐링 효과음 후 명령 대기             |
+| 웨이크 워드 | "실비야", "헤이 실비" – 호출 시 삐링 효과음 후 명령 대기             |
 | STT    | Google Cloud Speech‑to‑Text (webrtc‑VAD or RMS 감지) |
 | TTS    | 기본 Cloud TTS, 오류·오프라인 시 gTTS 폴백                    |
 | RAG    | 질문 → Google CSE 검색(상위 5개) → Gemini로 종합 답변          |
