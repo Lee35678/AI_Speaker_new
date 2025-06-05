@@ -1,9 +1,11 @@
 # fcm_module.py
 import requests
 import time
+import os
 
-# Firebase 콘솔 > 프로젝트 설정 > 클라우드 메시징 > 서버 키(legacy) 복사해서 붙여넣으세요
-SERVER_KEY = ""
+# Firebase 콘솔 > 프로젝트 설정 > 클라우드 메시징 > 서버 키(legacy)는
+# 환경 변수 `FCM_SERVER_KEY` 에서 읽어옵니다. 설정되지 않으면 빈 문자열을 사용합니다.
+SERVER_KEY = os.getenv("FCM_SERVER_KEY", "")
 
 FCM_URL = "https://fcm.googleapis.com/fcm/send"
 headers = {
@@ -11,12 +13,12 @@ headers = {
     "Authorization": f"key={SERVER_KEY}"
 }
 
-def send_fcm_alert():
+def send_fcm_alert(title: str, body: str):
     payload = {
         "to": "/topics/fallAlerts",
         "notification": {
-            "title": "낙상 감지 경고",
-            "body": "독거노인 사용자께서 넘어짐이 감지되었습니다!"
+            "title": title,
+            "body": body
         },
         "data": {
             "event": "fall",
