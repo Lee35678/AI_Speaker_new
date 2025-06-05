@@ -34,7 +34,7 @@ WAKE_PAT    = re.compile("|".join(WAKE_WORDS), re.I)
 USE_KWS = False
 try:
     import pvporcupine       # pip install pvporcupine
-    PORCUPINE = pvporcupine.create(keywords=["shee-bee-ya"])  # 커스텀 모델 시差
+    PORCUPINE = pvporcupine.create(keywords=["shee-bee-ya"])  # 커스텀 모델 사용 시
     USE_KWS = True
 except Exception:
     PORCUPINE = None
