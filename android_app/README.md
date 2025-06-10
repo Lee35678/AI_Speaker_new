@@ -15,9 +15,12 @@ implementation 'com.google.firebase:firebase-messaging:23.4.1'
 
 ## 2. Subscribe to `fallAlerts`
 
-Create `MyFirebaseMessagingService.kt` under `app/src/main/java/<your package>/`:
+Create `MyFirebaseMessagingService.kt` under `app/src/main/java/<your package>/`. Include
+your package statement at the top of the file:
 
 ```kotlin
+package com.android.fallalert  // replace with your app's package
+
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.messaging.FirebaseMessaging
@@ -66,6 +69,9 @@ Update `AndroidManifest.xml` to register the service:
     </intent-filter>
 </service>
 ```
+
+Make sure the `package` attribute in the `<manifest>` tag matches the package
+name used in `MyFirebaseMessagingService.kt`.
 
 ## 3. Build and Run
 
